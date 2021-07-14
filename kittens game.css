@@ -1,0 +1,11 @@
+div#fastHuntContainer {
+display: block !important;
+}
+
+#toggleCenter{
+	display: none;
+}
+
+.scheme_oil .resLimitNotice {
+    color: #fae;
+}
