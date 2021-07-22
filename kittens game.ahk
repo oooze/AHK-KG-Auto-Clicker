@@ -1,32 +1,19 @@
 ﻿; ver 1.1
+;MouseClick , WhichButton, X, Y, ClickCount, Speed, DownOrUp, Relative
 
-MouseClickXY(x, y, break_loop := 1)
-{
-	if (break_loop != 0)
-		Return
+F10::
+
+	Reload
+	Sleep 1000
 	
-	;MouseClick, left, x, y, 1, 10, U
-	;sleep, 1
-	 Send {Esc}
-	MouseClick, left, x, y, 1, 0
+	SplashTextOn,,, Failed to reload
+	Sleep 3000
+	SplashTextOff
+	
+	;	MouseClick, left, 1355, 634, 2
+	;	sleep, 50
+	;	Send, ^r
 	Return
-}
-
-BWait (amount, interval, exit)
-{
-	if(interval<1)
-		Return
-
-	while (amount > interval)
-	{
-		amount -= interval
-		sleep, interval
-		if (exit = 1)
-			Return
-	}
-	sleep, amount
-	Return
-}
 
 F12::	
 	MouseGetPos, MouseX, MouseY
@@ -36,6 +23,8 @@ F12::
 
 ^7::
 F7::
+	;config
+	CoordMode, Mouse, Client
 	resource_first_row_y = 144
 	rows_from_top_number = 29
 	line_height = 17
@@ -74,7 +63,7 @@ F7::
 			i=10 ; how many loops to skip: 10 loops = 1 second
 			MouseGetPos, loop_pos_x, loop_pos_y
 			BlockInput, Mouse
-			MouseClick, left, loop_pos_x, loop_pos_y, 1, 0, U
+			Click, left, loop_pos_x, loop_pos_y, 1, 0, U
 			
 			if(double_trade = 1)
 			{
@@ -134,6 +123,9 @@ F7::
 		;break
 	}
 	Mousemove, start_pos_x, start_pos_y
+	SplashTextOn,320,,Stopping Auto-clicking for the Kittens Game
+	sleep 2000
+	SplashTextOff
 	Return
 
 XButton2::
@@ -153,3 +145,44 @@ F9:: ;testing toggle
 	}
 	MsgBox, %i%
 	Return
+	
+	
+; *** functions ***
+
+MouseClickXY(x, y, break_loop := 1) ; my cystom click
+{
+	if (break_loop != 0)
+		Return
+	
+	Send {Esc}
+	
+	if(0) ; if debug
+	{
+		Click, Up %x% %y%
+		SplashTextOn,,, clicking at %x% / %y%.
+		Sleep 300
+		SplashTextOff
+	}
+	else {
+		
+	}
+	Click, %x% %y%
+	
+	Return
+}
+
+BWait (amount, interval, exit) ;better wait, that can be interrupted
+{
+	if(interval<1)
+		Return
+
+	while (amount > interval)
+	{
+		amount -= interval
+		sleep, interval
+		if (exit = 1)
+			Return
+	}
+	sleep, amount
+	Return
+}
