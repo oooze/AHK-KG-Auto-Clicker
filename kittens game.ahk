@@ -4,13 +4,14 @@
 	
 	;config
 	#MaxThreadsPerHotkey 2
+	CoordMode, Mouse, Client
 	line_height := 17
-	first_line_y := 95
+	first_line_y := 95 ; 125 ; ;line above the resources
 	pinned_embasies_count := 3
 
 	send_hunters_y := first_line_y + line_height
-	craft_x := 377
-	craft_y := first_line_y + line_height * (4 + pinned_embasies_count)
+	craft_x := 314
+	craft_y := first_line_y + line_height * (5 + pinned_embasies_count)
 
 	astronomical_x := 1257
 	astronomical_y := 221
@@ -19,7 +20,7 @@
 	debug := 0
 	
 	;global variables
-	main_loop_off_toggle := 0
+	stop_main_loop := 1 ;has to get flipped before executing the loop
 
 F10:: ;reload the script
 	SplashTextOn,,, Reloading the script...
@@ -32,7 +33,6 @@ F10:: ;reload the script
 	Return
 
 F12:: ;insect pixel
-	CoordMode, Mouse, Client
 	MouseGetPos, MouseX, MouseY
 	PixelGetColor, color, %MouseX%, %MouseY%
 	WinGetActiveTitle, Title
@@ -42,128 +42,145 @@ F12:: ;insect pixel
 
 ^7::
 F7:: ;main loop
-	CoordMode, Mouse, Client
-	MouseGetPos, start_pos_x, start_pos_y
+	;MouseGetPos, start_pos_x, start_pos_y
 	
 	;hide resources
 	MouseClickXY(90, first_line_y, 0)
 	MouseClickXY(9, first_line_y, 0)
 	
-	;iterators
-	i=0
-	j=0
+	;iterators and semaphores
+	j := 0
+	run_cleanup := 1
 	
-	main_loop_off_toggle := !main_loop_off_toggle
-	while(main_loop_off_toggle)
+	stop_main_loop := !stop_main_loop ;toggle
+	while(!stop_main_loop)
 	{
-		;break
-		;observe the sky
-		PixelGetColor, color, astronomical_x, astronomical_y 
-		if(color=0xeecd80) ;0x343434) ;0x4C4141)
+		;medium frequency loop actions
+		BlockMouseImput(1)
+		MouseGetPos, loop_pos_x, loop_pos_y
+		
+		
+		MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade 1
+		MouseClickXY( 20, send_hunters_y, stop_main_loop) ;hunters
+		
+		;low frequency loop actions
+		if(j>0)
 		{
-			MouseGetPos, loop_pos_x, loop_pos_y
-			BlockInput, Mouse
-			MouseClickXY(astronomical_x, astronomical_y, main_loop_off_toggle) 
-			Mousemove, loop_pos_x, loop_pos_y
-			BlockInput, Off
-		}
-
-		if(i<1)
-		{
-			i=10 ;number of loop skips between  1 loop = 0.1 seconds
-			BlockInput, Mouse
-			MouseGetPos, loop_pos_x, loop_pos_y
-			;Click, left, loop_pos_x, loop_pos_y, 1, 0, U
-			Click, Up ;prevent selecting content
-			Click, Up Right
-			
-			MouseClickXY( 150, send_hunters_y + 3* line_height, main_loop_off_toggle) ;trade 1
-			MouseClickXY( 100, send_hunters_y, main_loop_off_toggle) ;hunters
-			
-			break
-			
-			if(j<1)
-			{
-				j=11
-				
-				
-			if(extra_trades = 1)
-			{
-				MouseClickXY( 150, send_hunters_y + 3* line_height, main_loop_off_toggle) ;trade
-			}
-
-				MouseClickXY( 150, send_hunters_y + line_height, main_loop_off_toggle) ;pray
-				
-				MouseClickXY( 240, craft_y + line_height *  0, main_loop_off_toggle) ;wood		
-				MouseClickXY( craft_x, craft_y + line_height *  1, main_loop_off_toggle) ;beam
-			;	MouseClickXY( craft_x, craft_y + line_height *  2, main_loop_off_toggle) ;slab
-			;	MouseClickXY( craft_x, craft_y + line_height *  4, main_loop_off_toggle) ;steel
-			;	MouseClickXY( craft_x, craft_y + line_height *  3, main_loop_off_toggle) ;plate
-			;	MouseClickXY( craft_x, craft_y + line_height *  5, main_loop_off_toggle) ;concrete
-			;	MouseClickXY( craft_x, craft_y + line_height *  6, main_loop_off_toggle) ;gear
-			;	MouseClickXY( craft_x, craft_y + line_height *  7, main_loop_off_toggle) ;alloy
-			;	MouseClickXY( craft_x, craft_y + line_height *  8, main_loop_off_toggle) ;eludium
-			;	MouseClickXY( craft_x, craft_y + line_height *  9, main_loop_off_toggle) ;scaffold
-			;	MouseClickXY( craft_x, craft_y + line_height * 10, main_loop_off_toggle) ;ship
-			;	MouseClickXY( craft_x, craft_y + line_height * 11, main_loop_off_toggle) ;tanker
-			;	MouseClickXY( craft_x, craft_y + line_height * 12, main_loop_off_toggle) ;kerosene
-			;	MouseClickXY( craft_x, craft_y + line_height * 14, main_loop_off_toggle) ;manuscript
-			;	MouseClickXY( craft_x, craft_y + line_height * 13, main_loop_off_toggle) ;parchment
-			;	MouseClickXY( craft_x, craft_y + line_height * 15, main_loop_off_toggle) ;compedium
-			;	MouseClickXY( craft_x, craft_y + line_height * 16, main_loop_off_toggle) ;blueprint
-			;	MouseClickXY( craft_x, craft_y + line_height * 17, main_loop_off_toggle) ;thorium
-			;	MouseClickXY( craft_x, craft_y + line_height * 18, main_loop_off_toggle) ;megalith
-			
-			;	MouseClickXY( 822, 606, main_loop_off_toggle) 
-			}
 			j--
-			Mousemove, loop_pos_x, loop_pos_y
-			BlockInput, Off
+		}else
+		{
+			j=10 ;skip loop J times
+			
+			if(extra_trades)
+			{
+				MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade
+			}
+
+			MouseClickXY( 20, send_hunters_y + line_height, stop_main_loop) ;pray
+			
+			MouseClickXY( craft_x-100, craft_y + line_height *  0, stop_main_loop) ;wood		
+			MouseClickXY( craft_x, craft_y + line_height *  1, stop_main_loop) ;beam
+			MouseClickXY( craft_x, craft_y + line_height *  2, stop_main_loop) ;slab
+			MouseClickXY( craft_x, craft_y + line_height *  4, stop_main_loop) ;steel
+			MouseClickXY( craft_x, craft_y + line_height *  3, stop_main_loop) ;plate
+		;	MouseClickXY( craft_x, craft_y + line_height *  5, stop_main_loop) ;concrete
+		;	MouseClickXY( craft_x, craft_y + line_height *  6, stop_main_loop) ;gear
+			MouseClickXY( craft_x, craft_y + line_height *  7, stop_main_loop) ;alloy
+			MouseClickXY( craft_x, craft_y + line_height *  8, stop_main_loop) ;eludium
+		;	MouseClickXY( craft_x, craft_y + line_height *  9, stop_main_loop) ;scaffold
+		;	MouseClickXY( craft_x, craft_y + line_height * 10, stop_main_loop) ;ship
+		;	MouseClickXY( craft_x, craft_y + line_height * 11, stop_main_loop) ;tanker
+			MouseClickXY( craft_x, craft_y + line_height * 12, stop_main_loop) ;kerosene
+			MouseClickXY( craft_x, craft_y + line_height * 14, stop_main_loop) ;manuscript
+			MouseClickXY( craft_x, craft_y + line_height * 13, stop_main_loop) ;parchment
+			MouseClickXY( craft_x, craft_y + line_height * 15, stop_main_loop) ;compedium
+			MouseClickXY( craft_x, craft_y + line_height * 16, stop_main_loop) ;blueprint
+			MouseClickXY( craft_x, craft_y + line_height * 17, stop_main_loop) ;thorium
+		;	MouseClickXY( craft_x, craft_y + line_height * 18, stop_main_loop) ;megalith
+		
+		;	MouseClickXY( 822, 606, stop_main_loop) 
 		}
-		i--
-
-		if (main_loop_off_toggle = 1)
-			break
-		sleep, 100
-
+		MouseMove, loop_pos_x, loop_pos_y
+		BlockMouseImput(0)
+		
+		loop, 10 ;wait between resource converting while checking; 1 loop = 0.1 seconds
+		{
+			;high frequency loop actions
+			sleep, 100
+			if (stop_main_loop)
+				break
+			
+			;observe the sky
+			PixelGetColor, color, astronomical_x, astronomical_y 
+			if(color=0xeecd80) ;0x343434) ;0x4C4141)
+			{
+				BlockMouseImput(1)
+				MouseGetPos, loop_pos_x, loop_pos_y
+				MouseClickXY(astronomical_x, astronomical_y, stop_main_loop) 
+				MouseMove, loop_pos_x, loop_pos_y
+				BlockMouseImput(0)
+			}
+		}
 	}
-	Mousemove, start_pos_x, start_pos_y
 	
-	SplashTextOn,320,,Stopping Auto-clicking for the Kittens Game
-	sleep 2000
-	SplashTextOff
+	if(run_cleanup)	;loop cleanup
+	{
+		run_cleanup := 0
+		BlockMouseImput(0)
+		MouseClickXY(90, first_line_y, 0) ;show resources (if hidden)
+		;Mousemove, start_pos_x, start_pos_y
+		SplashTextOn,320,,Stopping Auto-clicking for the Kittens Game
+		sleep 2000
+		SplashTextOff
+	}
+
 	Return
 
-XButton2::
+XButton2:: ;no more accidental reloading
 	Send {Browser_Forward}
-F8::
-	main_loop_off_toggle = 1
-	Return
-
-^F9:: ;testing toggle
-	If first_run=true
-	{
-		first_run=false
-	}
-	else
-	{
-		first_run=true
-	}
-	MsgBox, %first_run%
-	Return
-
 
 
 ; *****************
 ; *** functions ***
 ; *****************
 
-MouseClickXY(x, y, main_loop_off_toggle := 1) ; my cystom click
+BlockMouseImput(onoff)
 {
-	if (main_loop_off_toggle != 0)
+	if(onoff) ; block mouse input
+	{
+		BlockInput, MouseMove
+		click, up ;prevent selecting page content
+		Hotkey, LButton, nothing, On
+	;	Hotkey, MButton, nothing, On
+	;	Hotkey, RButton, nothing, On
+	;	Hotkey, XButton1, nothing, On
+	;	Hotkey, XButton2, nothing, On
+	;	Hotkey, WheelUp, nothing, On
+	;	Hotkey, WheelDown, nothing, On
+	}
+	else
+	{
+		BlockInput, MouseMoveOff
+		Hotkey, LButton, nothing, Off
+	;	Hotkey, MButton, nothing, Off
+	;	Hotkey, RButton, nothing, Off
+	;	Hotkey, XButton1, nothing, Off
+	;	Hotkey, XButton2, nothing, Off
+	;	Hotkey, WheelUp, nothing, Off
+	;	Hotkey, WheelDown, nothing, Off
+	}
+	Return
+}
+
+nothing:
+return
+
+MouseClickXY(x, y, stop_main_loop := 0) ; my cystom click
+{
+	if (stop_main_loop)
 		Return
 	
-	Send {Esc}
+	;Send {Esc}
 	
 	if(debug) ; if debug
 	{
