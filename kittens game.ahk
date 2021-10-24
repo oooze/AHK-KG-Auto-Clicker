@@ -56,77 +56,78 @@ F9:: ;main loop
 	stop_main_loop := !stop_main_loop ;toggle
 	while(!stop_main_loop)
 	{
-			;medium frequency loop actions
-			BlockMouseImput(1)
-			MouseGetPos, loop_pos_x, loop_pos_y
+		;mouse off & remember position
+		BlockMouseImput(1)
+		MouseGetPos, loop_pos_x, loop_pos_y
+		
+		;medium frequency loop actions
+		MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade 1
+		MouseClickXY( 20, send_hunters_y, stop_main_loop) ;hunters
+		
+		;low frequency loop actions
+		if(j>0)
+		{
+			j--
+		}else
+		{
+			j=5 ;skip loop J times
 			
-			
-			MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade 1
-			MouseClickXY( 20, send_hunters_y, stop_main_loop) ;hunters
-			
-			;low frequency loop actions
-			if(j>0)
+			;trades
+		;	MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade 1
+			if(extra_trades)
 			{
-				j--
-			}else
-			{
-				j=5 ;skip loop J times
-				
-				
-			;	MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade 1
-				
-				if(extra_trades)
-				{
-					MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade
-				}
+				MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade
+			}
 
-				MouseClickXY( 20, send_hunters_y + line_height, stop_main_loop) ;pray
-				
-			;	MouseClickXY( craft_x-100, craft_y + line_height *  0, stop_main_loop) ;wood		
-			;	MouseClickXY( craft_x, craft_y + line_height *  1, stop_main_loop) ;beam
-			;	MouseClickXY( craft_x, craft_y + line_height *  2, stop_main_loop) ;slab
-			;	MouseClickXY( craft_x, craft_y + line_height *  4, stop_main_loop) ;steel
-			;	MouseClickXY( craft_x, craft_y + line_height *  3, stop_main_loop) ;plate
-			;	MouseClickXY( craft_x, craft_y + line_height *  5, stop_main_loop) ;concrete
-			;	MouseClickXY( craft_x, craft_y + line_height *  6, stop_main_loop) ;gear
-			;	MouseClickXY( craft_x, craft_y + line_height *  7, stop_main_loop) ;alloy
-			;	MouseClickXY( craft_x-123, craft_y + line_height *  8, stop_main_loop) ;eludium
-			;	MouseClickXY( craft_x, craft_y + line_height *  9, stop_main_loop) ;scaffold
-			;	MouseClickXY( craft_x, craft_y + line_height * 10, stop_main_loop) ;ship
-			;	MouseClickXY( craft_x, craft_y + line_height * 11, stop_main_loop) ;tanker
-			;	MouseClickXY( craft_x, craft_y + line_height * 12, stop_main_loop) ;kerosene
-			;	MouseClickXY( craft_x, craft_y + line_height * 14, stop_main_loop) ;manuscript
-			;	MouseClickXY( craft_x, craft_y + line_height * 13, stop_main_loop) ;parchment
-			;	MouseClickXY( craft_x, craft_y + line_height * 15, stop_main_loop) ;compedium
-			;	MouseClickXY( craft_x, craft_y + line_height * 16, stop_main_loop) ;blueprint
-			;	MouseClickXY( craft_x, craft_y + line_height * 17, stop_main_loop) ;thorium
-			;	MouseClickXY( craft_x, craft_y + line_height * 18, stop_main_loop) ;megalith
+			MouseClickXY( 20, send_hunters_y + line_height, stop_main_loop) ;pray
 			
-			;	MouseClickXY( 822, 606, stop_main_loop)
+			;crafting
+			MouseClickXY( craft_x-100, craft_y + line_height *  0, stop_main_loop) ;wood		
+			MouseClickXY( craft_x, craft_y + line_height *  1, stop_main_loop) ;beam
+			MouseClickXY( craft_x, craft_y + line_height *  2, stop_main_loop) ;slab
+			MouseClickXY( craft_x, craft_y + line_height *  4, stop_main_loop) ;steel
+			MouseClickXY( craft_x, craft_y + line_height *  3, stop_main_loop) ;plate
+		;	MouseClickXY( craft_x, craft_y + line_height *  5, stop_main_loop) ;concrete
+		;	MouseClickXY( craft_x, craft_y + line_height *  6, stop_main_loop) ;gear
+			MouseClickXY( craft_x, craft_y + line_height *  7, stop_main_loop) ;alloy
+			MouseClickXY( craft_x-123, craft_y + line_height *  8, stop_main_loop) ;eludium
+		;	MouseClickXY( craft_x, craft_y + line_height *  9, stop_main_loop) ;scaffold
+		;	MouseClickXY( craft_x, craft_y + line_height * 10, stop_main_loop) ;ship
+		;	MouseClickXY( craft_x, craft_y + line_height * 11, stop_main_loop) ;tanker
+			MouseClickXY( craft_x, craft_y + line_height * 12, stop_main_loop) ;kerosene
+			MouseClickXY( craft_x, craft_y + line_height * 14, stop_main_loop) ;manuscript
+			MouseClickXY( craft_x, craft_y + line_height * 13, stop_main_loop) ;parchment
+			MouseClickXY( craft_x, craft_y + line_height * 15, stop_main_loop) ;compedium
+		;	MouseClickXY( craft_x, craft_y + line_height * 16, stop_main_loop) ;blueprint
+			MouseClickXY( craft_x, craft_y + line_height * 17, stop_main_loop) ;thorium
+		;	MouseClickXY( craft_x, craft_y + line_height * 18, stop_main_loop) ;megalith
+		
+			MouseClickXY( 822, 606, stop_main_loop) ;?
+		
+		}
+		
+		;mouse on & return to old position
+		MouseMove, loop_pos_x, loop_pos_y
+		BlockMouseImput(0)
+		
+		loop, 9 ;wait between resource converting while checking; 1 loop = 0.1 seconds
+		{
+			;high frequency loop actions
+			sleep, 100
+			if (stop_main_loop)
+				break
 			
-			}
-			
-			MouseMove, loop_pos_x, loop_pos_y
-			BlockMouseImput(0)
-			
-			loop, 9 ;wait between resource converting while checking; 1 loop = 0.1 seconds
+			;observe the sky
+			PixelGetColor, color, astronomical_x, astronomical_y 
+			if(color=0xeecd80) ;0x343434) ;0x4C4141)
 			{
-				;high frequency loop actions
-				sleep, 100
-				if (stop_main_loop)
-					break
-				
-				;observe the sky
-				PixelGetColor, color, astronomical_x, astronomical_y 
-				if(color=0xeecd80) ;0x343434) ;0x4C4141)
-				{
-					BlockMouseImput(1)
-					MouseGetPos, loop_pos_x, loop_pos_y
-					MouseClickXY(astronomical_x, astronomical_y, stop_main_loop) 
-					MouseMove, loop_pos_x, loop_pos_y
-					BlockMouseImput(0)
-				}
+				BlockMouseImput(1)
+				MouseGetPos, loop_pos_x, loop_pos_y
+				MouseClickXY(astronomical_x, astronomical_y, stop_main_loop) 
+				MouseMove, loop_pos_x, loop_pos_y
+				BlockMouseImput(0)
 			}
+		}
 	}
 	
 	if(run_cleanup)	;loop cleanup
