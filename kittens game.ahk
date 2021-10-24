@@ -1,4 +1,4 @@
-﻿; ver 1.2.2
+﻿; ver 1.3.1
 	
 	;TODO hide_resouces := false
 	
@@ -40,11 +40,12 @@ F12:: ;insect pixel
 	MsgBox,%Title% %MouseX% : %MouseY% = %color%. 
 	Return
 
-^7::
-F7:: ;main loop
+F9:: ;main loop
 	;MouseGetPos, start_pos_x, start_pos_y
 	
 	;hide resources
+	MouseClickXY(190, first_line_y, 0)
+	Send {Home}
 	MouseClickXY(90, first_line_y, 0)
 	MouseClickXY(9, first_line_y, 0)
 	
@@ -69,7 +70,10 @@ F7:: ;main loop
 			j--
 		}else
 		{
-			j=10 ;skip loop J times
+			j=5 ;skip loop J times
+			
+			
+		;	MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade 1
 			
 			if(extra_trades)
 			{
@@ -86,7 +90,7 @@ F7:: ;main loop
 		;	MouseClickXY( craft_x, craft_y + line_height *  5, stop_main_loop) ;concrete
 		;	MouseClickXY( craft_x, craft_y + line_height *  6, stop_main_loop) ;gear
 			MouseClickXY( craft_x, craft_y + line_height *  7, stop_main_loop) ;alloy
-			MouseClickXY( craft_x, craft_y + line_height *  8, stop_main_loop) ;eludium
+			MouseClickXY( craft_x-123, craft_y + line_height *  8, stop_main_loop) ;eludium
 		;	MouseClickXY( craft_x, craft_y + line_height *  9, stop_main_loop) ;scaffold
 		;	MouseClickXY( craft_x, craft_y + line_height * 10, stop_main_loop) ;ship
 		;	MouseClickXY( craft_x, craft_y + line_height * 11, stop_main_loop) ;tanker
@@ -98,12 +102,12 @@ F7:: ;main loop
 			MouseClickXY( craft_x, craft_y + line_height * 17, stop_main_loop) ;thorium
 		;	MouseClickXY( craft_x, craft_y + line_height * 18, stop_main_loop) ;megalith
 		
-		;	MouseClickXY( 822, 606, stop_main_loop) 
+		;	MouseClickXY( 822, 606, stop_main_loop)
 		}
 		MouseMove, loop_pos_x, loop_pos_y
 		BlockMouseImput(0)
 		
-		loop, 10 ;wait between resource converting while checking; 1 loop = 0.1 seconds
+		loop, 9 ;wait between resource converting while checking; 1 loop = 0.1 seconds
 		{
 			;high frequency loop actions
 			sleep, 100
@@ -138,7 +142,12 @@ F7:: ;main loop
 
 XButton2:: ;no more accidental reloading
 	Send {Browser_Forward}
-
+	
+F7::
+MouseClickXY(1246, 138)
+sleep 666
+MouseClickXY(760, 600)
+return
 
 ; *****************
 ; *** functions ***
