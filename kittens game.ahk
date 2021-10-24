@@ -1,4 +1,4 @@
-﻿; ver 1.3.1
+﻿; ver 1.3.2
 	
 	;TODO hide_resouces := false
 	
