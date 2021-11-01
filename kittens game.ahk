@@ -10,7 +10,7 @@
 	pinned_embasies_count := 3
 
 	send_hunters_y := first_line_y + line_height
-	craft_x := 314
+	craft_x := 330 ;314
 	craft_y := first_line_y + line_height * (5 + pinned_embasies_count)
 
 	astronomical_x := 1257
@@ -41,7 +41,9 @@ F12:: ;insect pixel
 	Return
 
 F9:: ;main loop
-	;MouseGetPos, start_pos_x, start_pos_y
+	;memorise cursor position
+	BlockMouseImput(1)
+	MouseGetPos, loop_pos_x, loop_pos_y
 	
 	;hide resources
 	MouseClickXY(190, first_line_y, 0)
@@ -53,12 +55,14 @@ F9:: ;main loop
 	j := 0
 	run_cleanup := 1
 	
+	;return mouse to position before the loop
+	BlockMouseImput(0)
+	MouseMove, loop_pos_x, loop_pos_y
+	
 	stop_main_loop := !stop_main_loop ;toggle
 	while(!stop_main_loop)
 	{
-		;mouse off & remember position
-		BlockMouseImput(1)
-		MouseGetPos, loop_pos_x, loop_pos_y
+
 		
 		;medium frequency loop actions
 		MouseClickXY( 20, send_hunters_y + 3* line_height, stop_main_loop) ;trade 1
@@ -68,6 +72,33 @@ F9:: ;main loop
 		if(j>0)
 		{
 			j--
+			
+			loop, 9 ;wait between resource converting while checking; 1 loop = 0.1 seconds
+			{
+				;high frequency loop actions
+				;mouse on & restore position
+				MouseMove, loop_pos_x, loop_pos_y
+				BlockMouseImput(0)
+
+				sleep, 100
+				
+				if (stop_main_loop)
+				{
+					break
+				}
+				
+				;mouse off & remember position
+				BlockMouseImput(1)
+				MouseGetPos, loop_pos_x, loop_pos_y
+					
+				;observe the sky
+				PixelGetColor, color, astronomical_x, astronomical_y 
+				if(color=0xeecd80) ;0x343434) ;0x4C4141)
+				{
+					MouseClickXY(astronomical_x, astronomical_y, stop_main_loop)
+				} 
+
+			}
 		}else
 		{
 			j=5 ;skip loop J times
@@ -102,32 +133,11 @@ F9:: ;main loop
 			MouseClickXY( craft_x, craft_y + line_height * 17, stop_main_loop) ;thorium
 		;	MouseClickXY( craft_x, craft_y + line_height * 18, stop_main_loop) ;megalith
 		
-			MouseClickXY( 822, 606, stop_main_loop) ;?
-		
+			;mouse on & return to old position
+			MouseMove, loop_pos_x, loop_pos_y
+			BlockMouseImput(0)
 		}
-		
-		;mouse on & return to old position
-		MouseMove, loop_pos_x, loop_pos_y
-		BlockMouseImput(0)
-		
-		loop, 9 ;wait between resource converting while checking; 1 loop = 0.1 seconds
-		{
-			;high frequency loop actions
-			sleep, 100
-			if (stop_main_loop)
-				break
-			
-			;observe the sky
-			PixelGetColor, color, astronomical_x, astronomical_y 
-			if(color=0xeecd80) ;0x343434) ;0x4C4141)
-			{
-				BlockMouseImput(1)
-				MouseGetPos, loop_pos_x, loop_pos_y
-				MouseClickXY(astronomical_x, astronomical_y, stop_main_loop) 
-				MouseMove, loop_pos_x, loop_pos_y
-				BlockMouseImput(0)
-			}
-		}
+
 	}
 	
 	if(run_cleanup)	;loop cleanup
@@ -146,7 +156,7 @@ F9:: ;main loop
 XButton2:: ;no more accidental reloading
 	Send {Browser_Forward}
 	
-F7::
+F7:: ;load save from cloud click
 MouseClickXY(1246, 138)
 sleep 666
 MouseClickXY(760, 600)
